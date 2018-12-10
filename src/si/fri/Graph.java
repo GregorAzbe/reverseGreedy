@@ -108,9 +108,9 @@ public class Graph {
         return stringBuilder.toString();
     }
 
-    public Iterator<Integer> getIterator() {
+    public Iterator<Integer> getIterator(boolean desc) {
         int[] order = IntStream.range(0, n)
-                .boxed().sorted(Comparator.comparingInt(i -> -deg[i]))
+                .boxed().sorted(Comparator.comparingInt(i -> deg[i] * (desc ? 1 : -1) ))
                 .mapToInt(ele -> ele).toArray();
 
         return new Iterator<Integer>() {

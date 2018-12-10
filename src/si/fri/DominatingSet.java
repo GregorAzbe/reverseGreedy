@@ -10,7 +10,7 @@ public class DominatingSet {
 
         List<Integer> dominantVertices = new ArrayList<>();
 
-        Iterator<Integer> iterator = graph.getIterator();
+        Iterator<Integer> iterator = graph.getIterator(false);
 
         while (iterator.hasNext()) {
             int v = iterator.next();
