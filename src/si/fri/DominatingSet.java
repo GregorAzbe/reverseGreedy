@@ -4,9 +4,11 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-public class DominatingSet {
-    public static List<Integer> greedy(Graph g) {
-        Graph graph = new Graph(g);
+public class DominatingSet implements IProblem{
+
+    @Override
+    public Solution greedy(IGraph g) {
+        AdjacencyMatrixGraph graph = new AdjacencyMatrixGraph(g);
 
         List<Integer> dominantVertices = new ArrayList<>();
 
@@ -17,11 +19,12 @@ public class DominatingSet {
             dominantVertices.add(v);
             graph.removeVertexAndNeighbours(v);
         }
-        return dominantVertices;
+        return new Solution(dominantVertices);
     }
 
-    public static List<Integer> reverseGreedy(Graph g) {
-        Graph graph = new Graph(g);
+    @Override
+    public Solution reverseGreedy(IGraph g) {
+        AdjacencyMatrixGraph graph = new AdjacencyMatrixGraph(g);
 
         List<Integer> dominantVertices = new ArrayList<>();
 
@@ -72,14 +75,16 @@ public class DominatingSet {
             score[x] = Integer.MAX_VALUE/2;
         }
 
-        return dominantVertices;
+        return new Solution(dominantVertices);
+
     }
 
-    public static boolean test(Graph g, List<Integer> dominantVertices){
-        Graph testGraph = new Graph(g);
+    @Override
+    public boolean test(IGraph g, si.fri.Solution dominantVertices){
+        AdjacencyMatrixGraph testGraph = new AdjacencyMatrixGraph(g);
         boolean[] isCovered = new boolean[testGraph.getOriginalSize()];
 
-        for (int v : dominantVertices){
+        for (int v : ((Solution)dominantVertices).getSolution()){
             isCovered[v] = true;
             for(int n : testGraph.getNeighbours(v)){
                 isCovered[n] = true;
@@ -89,5 +94,26 @@ public class DominatingSet {
             if(!x) return false;
         }
         return true;
+    }
+
+    @Override
+    public AdjacencyMatrixGraph generateGraph(int verticesNumber, int edgesNumber) {
+        return new AdjacencyMatrixGraph(verticesNumber, edgesNumber);
+    }
+
+    class Solution extends si.fri.Solution<List<Integer>> {
+        Solution(List<Integer> solution) {
+            this.solution = solution;
+        }
+
+        @Override
+        public int getQuality() {
+            return solution.size();
+        }
+    }
+
+    @Override
+    public String toString() {
+        return "Dominating set";
     }
 }
