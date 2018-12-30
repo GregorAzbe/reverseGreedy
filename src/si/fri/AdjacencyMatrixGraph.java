@@ -4,13 +4,13 @@ import java.util.*;
 import java.util.stream.IntStream;
 
 
-public class Graph {
+public class AdjacencyMatrixGraph implements IGraph {
     private int[][] graph;
     private int[] deg;
     private boolean[] exists;
     private int n, nVertices;
 
-    Graph(int nVertices, int nEdges){
+    AdjacencyMatrixGraph(int nVertices, int nEdges){
         setN(nVertices);
 
         graph = new int[n][n];
@@ -39,14 +39,15 @@ public class Graph {
     }
 
 
-    Graph(Graph graph){
-        setN(graph.n);
-        this.deg = graph.deg.clone();
-        this.exists = graph.exists.clone();
+    AdjacencyMatrixGraph(IGraph graph){
+        AdjacencyMatrixGraph g = (AdjacencyMatrixGraph) graph;
+        setN(g.n);
+        this.deg = g.deg.clone();
+        this.exists = g.exists.clone();
 
         this.graph = new int[n][n];
         for (int i = 0; i < nVertices; i++) {
-            this.graph[i] = graph.graph[i].clone();
+            this.graph[i] = g.graph[i].clone();
         }
     }
 
