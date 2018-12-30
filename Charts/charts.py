@@ -5,6 +5,7 @@ import plotly.graph_objs as go
 
 import numpy as np
 import pandas as ps
+import sys
 
 GREEDY_COLOR = dict(color='rgb(255,127,14)')
 REVERSE_GREEDY_COLOR = dict(color='rgb(31,119,180)')
@@ -76,11 +77,15 @@ def make_chart(name, greedy_column_index, reverse_gredy_column_index, unit=""):
     py.plot(figure, filename=name)
 
 
-plotly.tools.set_credentials_file(username='gregor.azbe', api_key='ynSyJDs4GCTyGD4oBkAO')
-
-results = np.loadtxt("../test.csv", delimiter=";")
+try:
+    _, _, file_name, problem_name = sys.argv
+except ValueError as e:
+    print("Unpack: ", sys.argv)
+    raise
+results = np.loadtxt(file_name, delimiter=";")
 results[:, 2] = results[:, 2] / 1000000
 results[:, 4] = results[:, 4] / 1000000
 
-make_chart("Velikost dominantne množice", 1, 3)
-make_chart("Čas računanja dominantne množice", 2, 4, "ms")
+plotly.tools.set_credentials_file(username='gregor.azbe', api_key='ynSyJDs4GCTyGD4oBkAO')
+make_chart(problem_name + "- velikost rešitve", 1, 3)
+make_chart(problem_name + "- čas računanja", 2, 4, "ms")
