@@ -75,7 +75,7 @@ public class AdjacencyMatrixGraph implements IGraph {
         return neighbours;
     }
 
-    private void removeVertex(int index){
+    public void removeVertex(int index){
         for (int i = 0; i < n; i++) {
             if(graph[index][i] == 1){
                 deg[i]--;
