@@ -23,7 +23,7 @@ enum Mode{
 public class Main {
     private final static int TEST_SIZE = 100, FROM_SIZE = 100, TO_SIZE = 1000, STEP = 100;
     private final static Mode mode = Mode.MEASURE;
-    private final static IProblem problem = new GraphColoring();
+    private final static IProblem problem = new VertexCover();
 
     public static void main(String[] args) {
         List<Results> results = new ArrayList<>();
@@ -37,7 +37,7 @@ public class Main {
                 try {
                     if (fileName != null) {
                         BufferedReader error = new BufferedReader(new InputStreamReader(Runtime.getRuntime().exec(
-                                String.format("python Charts/charts.py '%s' '%s'", fileName, problem.toString()))
+                                String.format("python Charts/charts.py \"%s\" \"%s\"", fileName, problem.toString()))
                                 .getErrorStream()));
                         String errLine;
 
