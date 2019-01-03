@@ -1,5 +1,6 @@
 package si.fri;
 
+import java.util.AbstractCollection;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -10,7 +11,7 @@ public class DominatingSet implements IProblem{
     public Solution greedy(IGraph g) {
         AdjacencyMatrixGraph graph = new AdjacencyMatrixGraph(g);
 
-        List<Integer> dominantVertices = new ArrayList<>();
+        AbstractCollection<Integer> dominantVertices = new ArrayList<>();
 
         Iterator<Integer> iterator = graph.getIterator(false);
 
@@ -19,14 +20,14 @@ public class DominatingSet implements IProblem{
             dominantVertices.add(v);
             graph.removeVertexAndNeighbours(v);
         }
-        return new Solution(dominantVertices);
+        return new VertexSet(dominantVertices);
     }
 
     @Override
     public Solution reverseGreedy(IGraph g) {
         AdjacencyMatrixGraph graph = new AdjacencyMatrixGraph(g);
 
-        List<Integer> dominantVertices = new ArrayList<>();
+        AbstractCollection<Integer> dominantVertices = new ArrayList<>();
 
         int n = graph.getOriginalSize();
         int[] covCnt = new int[n], score = new int[n];
@@ -75,16 +76,15 @@ public class DominatingSet implements IProblem{
             score[x] = Integer.MAX_VALUE/2;
         }
 
-        return new Solution(dominantVertices);
-
+        return new VertexSet(dominantVertices);
     }
 
     @Override
-    public boolean test(IGraph g, si.fri.Solution dominantVertices){
+    public boolean test(IGraph g, Solution dominantVertices){
         AdjacencyMatrixGraph testGraph = new AdjacencyMatrixGraph(g);
         boolean[] isCovered = new boolean[testGraph.getOriginalSize()];
 
-        for (int v : ((Solution)dominantVertices).getSolution()){
+        for (int v : ((VertexSet)dominantVertices).getSolution()){
             isCovered[v] = true;
             for(int n : testGraph.getNeighbours(v)){
                 isCovered[n] = true;
@@ -99,17 +99,6 @@ public class DominatingSet implements IProblem{
     @Override
     public AdjacencyMatrixGraph generateGraph(int verticesNumber, int edgesNumber) {
         return new AdjacencyMatrixGraph(verticesNumber, edgesNumber);
-    }
-
-    class Solution extends si.fri.Solution<List<Integer>> {
-        Solution(List<Integer> solution) {
-            this.solution = solution;
-        }
-
-        @Override
-        public int getQuality() {
-            return solution.size();
-        }
     }
 
     @Override
