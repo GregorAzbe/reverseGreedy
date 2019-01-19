@@ -6,6 +6,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Scanner;
 
 enum Mode{
     TEST(1, 0),
@@ -33,7 +34,20 @@ public class Main {
                 for (int nVertices = FROM_SIZE; nVertices <= TO_SIZE; nVertices += STEP)
                     results.add(runAlgorithm(problem, nVertices));
 
-                String fileName = Results.saveResults(results, problem.toString());
+                Scanner reader = new Scanner(System.in);
+                reader.useDelimiter("");
+//                while (true) {
+                    System.out.println("Oznaka datoteke:");
+                    String label = reader.nextLine();
+                    /*if (saveAns.equals("y")){
+                        break;
+                    } else if(saveAns.equals("n")) {
+                        return;
+                    }*/
+//                }
+                reader.close();
+
+                String fileName = Results.saveResults(results, problem.toString(), label);
                 try {
                     if (fileName != null) {
                         BufferedReader error = new BufferedReader(new InputStreamReader(Runtime.getRuntime().exec(
@@ -111,12 +125,15 @@ public class Main {
             return sb.toString();
         }
 
-        static String saveResults(List<Results> results, String problemName) {
+        static String saveResults(List<Results> results, String problemName, String label) {
             PrintWriter pw;
             try {
-                DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss");
-                Date date = new Date();
-                String fileName = String.format("%s - %s.csv", problemName, dateFormat.format(date));
+                if(label.isEmpty()) {
+                    DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss");
+                    Date date = new Date();
+                     label = dateFormat.format(date);
+                }
+                String fileName = String.format("%s - %s.csv", problemName, label);
                 pw = new PrintWriter(new File(fileName));
                 StringBuilder sb = new StringBuilder();
                 for(Results result : results) {
