@@ -109,9 +109,9 @@ public class AdjacencyMatrixGraph implements IGraph {
         return stringBuilder.toString();
     }
 
-    public Iterator<Integer> getIterator(boolean desc) {
+    public Iterator<Integer> getIterator(boolean ascending) {
         int[] order = IntStream.range(0, n)
-                .boxed().sorted(Comparator.comparingInt(i -> deg[i] * (desc ? 1 : -1) ))
+                .boxed().sorted(Comparator.comparingInt(i -> deg[i] * (ascending ? 1 : -1) ))
                 .mapToInt(ele -> ele).toArray();
 
         return new Iterator<Integer>() {

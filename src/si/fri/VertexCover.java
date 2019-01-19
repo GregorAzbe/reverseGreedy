@@ -27,7 +27,7 @@ public class VertexCover implements IProblem {
 
         HashSet<Integer> vertexCoverSet = new HashSet<>();
 
-        for (Iterator<Integer> iterator = graph.getIterator(false); iterator.hasNext(); ){
+        for (Iterator<Integer> iterator = graph.getIterator(true); iterator.hasNext(); ){
             int v = iterator.next();
             if(!vertexCoverSet.contains(v)) {
                 vertexCoverSet.addAll(graph.getNeighbours(v));
