@@ -1,6 +1,7 @@
 package si.fri;
 
 import java.util.*;
+import java.util.List;
 
 public class GraphColoring implements IProblem {
     public Solution greedy(IGraph g) {
@@ -29,52 +30,83 @@ public class GraphColoring implements IProblem {
 
     public Solution reverseGreedy(IGraph g) {
         AdjacencyListGraph graph = new AdjacencyListGraph(g);
-
-        int[] solution = new int[graph.size()];
-        int nColorsPrevious;
         DisjointSet disjointSet = new DisjointSet(graph.size());
-        List<List<Integer>> colors = new ArrayList<>();
+
+        PriorityQueue<Color> colors = new PriorityQueue<>(graph.size(), Comparator.comparingInt(integers -> -integers.neighbours.size())); // descending
         for (int i = 0; i < graph.size(); i++) {
-            solution[i] = i;
-            ArrayList<Integer> color = new ArrayList<>();
-            color.add(i);
-            colors.add(color);
+            colors.add(new Color(i, graph.getNeighbours(i)));
         }
 
-        do {
-            nColorsPrevious = disjointSet.getNumberOfSets();
-            for (List<Integer> color1 : colors) {
-                for (List<Integer> color2 : colors) {
-                    if (color1 != color2 && !color1.isEmpty() && !color2.isEmpty()) {
-                        int color1Element = color1.get(0), color2Element = color2.get(0);
-                        if (!disjointSet.areInSameSet(color1Element, color2Element) && areColorsMergable(disjointSet, color1, color2, graph)) {
-                            for (int v : color2) {
-                                solution[v] = solution[color1Element];
-                            }
-                            disjointSet.mergeSets(color1Element, color2Element);
-                            color1.addAll(color2);
-                            color2.clear();
+        mergeColors(colors, disjointSet);
 
-                        }
-                    }
+        int[] solution = new int[graph.size()];
+        ArrayList<Integer> solutionColors = new ArrayList<>();
+
+        for (int i = 0; i < graph.size(); i++) {
+            boolean colorAlreadyExists = false;
+            for (int j = 0; j < solutionColors.size(); j++) {
+                if (disjointSet.areInSameSet(i, solutionColors.get(j))) {
+                    solution[i] = j + 1;
+                    colorAlreadyExists = true;
+                    break;
                 }
             }
-        } while (disjointSet.getNumberOfSets() < nColorsPrevious);
+            if (!colorAlreadyExists) {
+                solutionColors.add(i);
+                solution[i] = solutionColors.size();
+            }
+        }
 
         return new Solution(solution, disjointSet.getNumberOfSets());
     }
 
-    private boolean areColorsMergable(DisjointSet disjointSet, List<Integer> color1, List<Integer> color2, AdjacencyListGraph graph) {
-        int v1 = color2.get(0);
+    private void mergeColors(PriorityQueue<Color> colors1, DisjointSet disjointSet){
+        while(colors1.size() > 1) {
+            Color color1 = colors1.poll();
+            PriorityQueue<Color> colors2 = new PriorityQueue<>(colors1.size(), Comparator.comparingInt(integers -> -integers.neighbours.size())); // descending
+            colors2.addAll(colors1);
 
-        for (int v2 : color1) {
-            for (AdjacencyListGraph.Vertex n : graph.getNeighbours(v2)) {
-                if (disjointSet.areInSameSet(n.index, v1)) {
-                    return false;
+            while(!colors2.isEmpty()) {
+                Color color2 = colors2.poll();
+
+                int color1Element = color1.vertices.get(0), color2Element = color2.vertices.get(0);
+
+                if (!disjointSet.areInSameSet(color1Element, color2Element)) {
+                    if(areColorsMergable(disjointSet, color1, color2)) {
+                        disjointSet.mergeSets(color1Element, color2Element);
+                        color2.vertices.addAll(color1.vertices);
+                        color2.neighbours.addAll(color1.neighbours);
+
+                        // Refresh priority queue
+                        colors1.remove(color2);
+                        colors1.add(color2);
+
+                        break;
+                    }
                 }
             }
         }
+    }
+
+    private boolean areColorsMergable(DisjointSet disjointSet, Color color1, Color color2) {
+        int v1 = color1.vertices.get(0);
+
+        for (AdjacencyListGraph.Vertex n : color2.neighbours) {
+            if (disjointSet.areInSameSet(n.index, v1)) {
+                return false;
+            }
+        }
         return true;
+    }
+
+    class Color {
+        public List<Integer> vertices = new ArrayList<>();
+        public List<AdjacencyListGraph.Vertex> neighbours;
+
+        Color(int vertex, List<AdjacencyListGraph.Vertex> neighbours) {
+            vertices.add(vertex);
+            this.neighbours = neighbours;
+        }
     }
 
     @Override
