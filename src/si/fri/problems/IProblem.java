@@ -1,4 +1,7 @@
-package si.fri;
+package si.fri.problems;
+
+import si.fri.Solution;
+import si.fri.dataStructures.IGraph;
 
 public interface IProblem {
     Solution greedy(IGraph g);

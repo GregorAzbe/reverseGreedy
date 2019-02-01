@@ -1,4 +1,4 @@
-package si.fri;/*
+package si.fri.dataStructures;/*
  * Disjoint-set data structure - Library (Java)
  * 
  * Copyright (c) 2017 Project Nayuki. (MIT License)

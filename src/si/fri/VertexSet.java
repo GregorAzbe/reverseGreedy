@@ -2,8 +2,8 @@ package si.fri;
 
 import java.util.AbstractCollection;
 
-class VertexSet extends Solution<AbstractCollection<Integer>> {
-    VertexSet(AbstractCollection<Integer> solution) {
+public class VertexSet extends Solution<AbstractCollection<Integer>> {
+    public VertexSet(AbstractCollection<Integer> solution) {
         this.solution = solution;
     }
 

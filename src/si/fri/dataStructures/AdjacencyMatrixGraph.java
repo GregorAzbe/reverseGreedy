@@ -1,4 +1,4 @@
-package si.fri;
+package si.fri.dataStructures;
 
 import java.util.*;
 import java.util.stream.IntStream;
@@ -10,7 +10,7 @@ public class AdjacencyMatrixGraph implements IGraph {
     private boolean[] exists;
     private int n, nVertices;
 
-    AdjacencyMatrixGraph(int nVertices, int nEdges){
+    public AdjacencyMatrixGraph(int nVertices, int nEdges){
         setN(nVertices);
 
         graph = new int[n][n];
@@ -39,7 +39,7 @@ public class AdjacencyMatrixGraph implements IGraph {
     }
 
 
-    AdjacencyMatrixGraph(IGraph graph){
+    public AdjacencyMatrixGraph(IGraph graph){
         AdjacencyMatrixGraph g = (AdjacencyMatrixGraph) graph;
         setN(g.n);
         this.deg = g.deg.clone();
@@ -57,15 +57,15 @@ public class AdjacencyMatrixGraph implements IGraph {
         this.nVertices = n;
     }
 
-    int getOriginalSize(){
+    public int getOriginalSize(){
         return n;
     }
 
-    int getVertexDeg(int i){
+    public int getVertexDeg(int i){
         return deg[i];
     }
 
-    List<Integer> getNeighbours(int index){
+    public List<Integer> getNeighbours(int index){
         List<Integer> neighbours = new ArrayList<>();
         for (int i = 0; i < n; i++) {
             if(graph[index][i] == 1){

@@ -1,4 +1,8 @@
-package si.fri;
+package si.fri.problems;
+
+import si.fri.*;
+import si.fri.dataStructures.AdjacencyMatrixGraph;
+import si.fri.dataStructures.IGraph;
 
 import java.util.*;
 

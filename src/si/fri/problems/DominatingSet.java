@@ -1,11 +1,15 @@
-package si.fri;
+package si.fri.problems;
+
+import si.fri.*;
+import si.fri.dataStructures.AdjacencyMatrixGraph;
+import si.fri.dataStructures.IGraph;
 
 import java.util.AbstractCollection;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-public class DominatingSet implements IProblem{
+public class DominatingSet implements IProblem {
 
     @Override
     public Solution greedy(IGraph g) {

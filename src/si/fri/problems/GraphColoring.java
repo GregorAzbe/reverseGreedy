@@ -1,4 +1,8 @@
-package si.fri;
+package si.fri.problems;
+
+import si.fri.dataStructures.AdjacencyListGraph;
+import si.fri.dataStructures.DisjointSet;
+import si.fri.IGraph;
 
 import java.util.*;
 import java.util.List;
@@ -71,18 +75,16 @@ public class GraphColoring implements IProblem {
 
                 int color1Element = color1.vertices.get(0), color2Element = color2.vertices.get(0);
 
-                if (!disjointSet.areInSameSet(color1Element, color2Element)) {
-                    if(areColorsMergable(disjointSet, color1, color2)) {
-                        disjointSet.mergeSets(color1Element, color2Element);
-                        color2.vertices.addAll(color1.vertices);
-                        color2.neighbours.addAll(color1.neighbours);
+                if(areColorsMergable(disjointSet, color1, color2)) {
+                    disjointSet.mergeSets(color1Element, color2Element);
+                    color2.vertices.addAll(color1.vertices);
+                    color2.neighbours.addAll(color1.neighbours);
 
-                        // Refresh priority queue
-                        colors1.remove(color2);
-                        colors1.add(color2);
+                    // Refresh priority queue
+                    colors1.remove(color2);
+                    colors1.add(color2);
 
-                        break;
-                    }
+                    break;
                 }
             }
         }
@@ -91,6 +93,7 @@ public class GraphColoring implements IProblem {
     private boolean areColorsMergable(DisjointSet disjointSet, Color color1, Color color2) {
         int v1 = color1.vertices.get(0);
 
+        // You have to check just neighbours of one color
         for (AdjacencyListGraph.Vertex n : color2.neighbours) {
             if (disjointSet.areInSameSet(n.index, v1)) {
                 return false;

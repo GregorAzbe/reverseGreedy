@@ -1,4 +1,4 @@
-package si.fri;
+package si.fri.dataStructures;
 
 import java.util.*;
 
@@ -24,6 +24,29 @@ public class AdjacencyListGraph implements IGraph {
                     break;
                 }
             }
+
+            /*
+            Normal distribution of edges
+            while (true) {
+                int iU = -1;
+                int iV = -1;
+                while(iU < 0 || iU >= nVertices)
+                    iU = (int) ((random.nextGaussian() / 5 + 0.5) * nVertices);
+                while(iV < 0 || iV >= nVertices)
+                    iV = (int) ((random.nextGaussian() / 5 + 0.5) * nVertices);
+
+                iU  = (int)(iU/2.0);
+                iV  = (int)(iV/2.0+nVertices/2.0);
+
+                Vertex v = graph.get(iV);
+                Vertex u = graph.get(iU);
+
+                if (iU != iV && !u.getNeighbours().contains(v)) {
+                    v.addNeighbour(u);
+                    u.addNeighbour(v);
+                    break;
+                }
+            }*/
         }
     }
 

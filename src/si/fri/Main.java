@@ -1,5 +1,9 @@
 package si.fri;
 
+import si.fri.dataStructures.IGraph;
+import si.fri.problems.GraphColoring;
+import si.fri.problems.IProblem;
+
 import java.io.*;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -10,7 +14,7 @@ import java.util.Scanner;
 
 enum Mode{
     TEST(1, 0),
-    MEASURE(10, 100);
+    MEASURE(30, 100);
 
     public int repetitions;
     public int skippedRepetitions;
@@ -22,9 +26,9 @@ enum Mode{
 }
 
 public class Main {
-    private final static int TEST_SIZE = 100, FROM_SIZE = 100, TO_SIZE = 1000, STEP = 100;
+    private final static int TEST_SIZE = 2000, FROM_SIZE = 100, TO_SIZE = 1000, STEP = 100;
     private final static Mode mode = Mode.MEASURE;
-    private final static IProblem problem = new VertexCover();
+    private final static IProblem problem = new GraphColoring();
 
     public static void main(String[] args) {
         List<Results> results = new ArrayList<>();
@@ -79,7 +83,7 @@ public class Main {
 
         for (int i = 0; i < mode.repetitions + mode.skippedRepetitions; i++) {
             long start;
-            IGraph graph = problem.generateGraph(nVertices, nVertices * 10);
+            IGraph graph = problem.generateGraph(100, nVertices);
             start = System.nanoTime();
             Solution greedySolution = problem.greedy(graph);
             long tGreedy = System.nanoTime() - start;

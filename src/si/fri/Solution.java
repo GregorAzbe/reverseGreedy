@@ -8,7 +8,7 @@ public abstract class Solution<Type> {
     Solution() {
     }
 
-    Type getSolution() {
+    public Type getSolution() {
         return solution;
     }
 }
