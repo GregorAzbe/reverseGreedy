@@ -1,8 +1,7 @@
 package si.fri;
 
 import si.fri.dataStructures.IGraph;
-import si.fri.problems.GraphColoring;
-import si.fri.problems.IProblem;
+import si.fri.problems.*;
 
 import java.io.*;
 import java.text.DateFormat;
@@ -14,7 +13,7 @@ import java.util.Scanner;
 
 enum Mode{
     TEST(1, 0),
-    MEASURE(30, 100);
+    MEASURE(10, 100);
 
     public int repetitions;
     public int skippedRepetitions;
@@ -25,10 +24,24 @@ enum Mode{
     }
 }
 
+enum Problem {
+    DOMINATING_SET(new DominatingSet(), true),
+    GRAPH_COLORING(new GraphColoring(), false),
+    VERTEX_COVER(new VertexCover(), true);
+
+    public IProblem implementation;
+    public boolean doIncreaseVertexNumber;
+
+    Problem(IProblem implementation, boolean doIncreaseVertexNumber) {
+        this.implementation = implementation;
+        this.doIncreaseVertexNumber = doIncreaseVertexNumber;
+    }
+}
+
 public class Main {
-    private final static int TEST_SIZE = 2000, FROM_SIZE = 100, TO_SIZE = 1000, STEP = 100;
+    private final static int TEST_SIZE = 100, FROM_SIZE = 100, TO_SIZE = 1000, STEP = 100;
     private final static Mode mode = Mode.MEASURE;
-    private final static IProblem problem = new GraphColoring();
+    private final static Problem problem = Problem.DOMINATING_SET;
 
     public static void main(String[] args) {
         List<Results> results = new ArrayList<>();
@@ -41,8 +54,8 @@ public class Main {
                 Scanner reader = new Scanner(System.in);
                 reader.useDelimiter("");
 //                while (true) {
-                    System.out.println("Oznaka datoteke:");
-                    String label = reader.nextLine();
+                System.out.println("Oznaka datoteke:");
+                String label = reader.nextLine();
                     /*if (saveAns.equals("y")){
                         break;
                     } else if(saveAns.equals("n")) {
@@ -78,21 +91,26 @@ public class Main {
         }
     }
 
-    private static Results runAlgorithm(IProblem problem, int nVertices) throws AlgorithmException {
+    private static Results runAlgorithm(Problem problem, int problemSize) throws AlgorithmException {
         Results.Result[] resultsForOneProblemSize = new Results.Result[mode.repetitions];
 
         for (int i = 0; i < mode.repetitions + mode.skippedRepetitions; i++) {
             long start;
-            IGraph graph = problem.generateGraph(100, nVertices);
+            IGraph graph;
+            if(problem.doIncreaseVertexNumber){
+                graph = problem.implementation.generateGraph(problemSize, problemSize * 10);
+            } else {
+                graph = problem.implementation.generateGraph(100, problemSize);
+            }
             start = System.nanoTime();
-            Solution greedySolution = problem.greedy(graph);
+            Solution greedySolution = problem.implementation.greedy(graph);
             long tGreedy = System.nanoTime() - start;
-            if(!problem.test(graph, greedySolution)) throw new AlgorithmException();
+            if(!problem.implementation.test(graph, greedySolution)) throw new AlgorithmException();
 
             start = System.nanoTime();
-            Solution reverseGreedySolution = problem.reverseGreedy(graph);
+            Solution reverseGreedySolution = problem.implementation.reverseGreedy(graph);
             long tReverseGreedy = System.nanoTime() - start;
-            if(!problem.test(graph, reverseGreedySolution)) throw new AlgorithmException();
+            if(!problem.implementation.test(graph, reverseGreedySolution)) throw new AlgorithmException();
 
             if (i >= mode.skippedRepetitions) {
                 resultsForOneProblemSize[i - mode.skippedRepetitions] = new Results.Result(
@@ -103,15 +121,15 @@ public class Main {
                 );
             }
         }
-        return new Results(nVertices, resultsForOneProblemSize);
+        return new Results(problemSize, resultsForOneProblemSize);
     }
 
     static class Results {
         int problemSize;
 
         Results(int problemSize, Result[] results) {
-           this.results = results;
-           this.problemSize = problemSize;
+            this.results = results;
+            this.problemSize = problemSize;
         }
 
         Result[] results;
@@ -135,7 +153,7 @@ public class Main {
                 if(label.isEmpty()) {
                     DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss");
                     Date date = new Date();
-                     label = dateFormat.format(date);
+                    label = dateFormat.format(date);
                 }
                 String fileName = String.format("%s - %s.csv", problemName, label);
                 pw = new PrintWriter(new File(fileName));
