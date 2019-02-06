@@ -2,7 +2,7 @@ package si.fri.problems;
 
 import si.fri.dataStructures.AdjacencyListGraph;
 import si.fri.dataStructures.DisjointSet;
-import si.fri.IGraph;
+import si.fri.dataStructures.IGraph;
 
 import java.util.*;
 import java.util.List;

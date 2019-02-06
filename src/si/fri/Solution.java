@@ -1,11 +1,11 @@
 package si.fri;
 
 public abstract class Solution<Type> {
-    Type solution = null;
+    protected Type solution = null;
 
-    abstract int getQuality();
+    public abstract int getQuality();
 
-    Solution() {
+    protected Solution() {
     }
 
     public Type getSolution() {

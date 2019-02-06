@@ -6,7 +6,7 @@ import java.util.*;
 public class AdjacencyListGraph implements IGraph {
     private List<Vertex> graph;
 
-    AdjacencyListGraph(int nVertices, int nEdges) {
+    public AdjacencyListGraph(int nVertices, int nEdges) {
         graph = new ArrayList<>(nVertices);
         for (int i = 0; i < nVertices; i++) {
             graph.add(new Vertex(i));
@@ -50,7 +50,7 @@ public class AdjacencyListGraph implements IGraph {
         }
     }
 
-    AdjacencyListGraph(IGraph graph) {
+    public AdjacencyListGraph(IGraph graph) {
         this.graph = new ArrayList<>();
         this.graph = new ArrayList<>(((AdjacencyListGraph) graph).graph);
     }
@@ -104,14 +104,16 @@ public class AdjacencyListGraph implements IGraph {
     }*/
 
 
-    class Vertex {
+    public class Vertex {
         List<Vertex> getNeighbours() {
             return neighbours;
         }
 
         private List<Vertex> neighbours = new ArrayList<>();
 
-        int score = 1, coverageCount = 1, index;
+        int score = 1;
+        int coverageCount = 1;
+        public int index;
 
         Vertex(int index) {
             this.index = index;
