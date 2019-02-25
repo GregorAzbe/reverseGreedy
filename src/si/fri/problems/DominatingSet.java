@@ -10,7 +10,6 @@ import java.util.Iterator;
 import java.util.List;
 
 public class DominatingSet implements IProblem {
-
     @Override
     public Solution greedy(IGraph g) {
         AdjacencyMatrixGraph graph = new AdjacencyMatrixGraph(g);
@@ -101,6 +100,6 @@ public class DominatingSet implements IProblem {
 
     @Override
     public String toString() {
-        return "Dominating set";
+        return "Dominantna množica";
     }
 }

@@ -59,6 +59,6 @@ public class VertexCover implements IProblem {
 
     @Override
     public String toString() {
-        return "Vertex cover";
+        return "Vozliščno pokritje";
     }
 }

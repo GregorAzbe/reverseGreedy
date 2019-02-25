@@ -146,6 +146,6 @@ public class GraphColoring implements IProblem {
 
     @Override
     public String toString() {
-        return "Graph coloring";
+        return "Barvanje grafov";
     }
 }
