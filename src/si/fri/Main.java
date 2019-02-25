@@ -41,7 +41,7 @@ enum Problem {
 public class Main {
     private final static int TEST_SIZE = 100, FROM_SIZE = 100, TO_SIZE = 1000, STEP = 100;
     private final static Mode mode = Mode.MEASURE;
-    private final static Problem problem = Problem.DOMINATING_SET;
+    private final static Problem problem = Problem.VERTEX_COVER;
 
     public static void main(String[] args) {
         List<Results> results = new ArrayList<>();
@@ -64,11 +64,18 @@ public class Main {
 //                }
                 reader.close();
 
-                String fileName = Results.saveResults(results, problem.toString(), label);
+                String fileName = Results.saveResults(results, problem.implementation.toString(), label);
                 try {
                     if (fileName != null) {
+                        boolean doIncreaseVertexNumber = problem.doIncreaseVertexNumber;
                         BufferedReader error = new BufferedReader(new InputStreamReader(Runtime.getRuntime().exec(
-                                String.format("python Charts/charts.py \"%s\" \"%s\"", fileName, problem.toString()))
+                                String.format(
+                                        "python Charts/charts.py \"%s\" \"%s\" \"%s\"",
+                                        fileName,
+                                        problem.implementation.toString(),
+                                        doIncreaseVertexNumber ? "Število vozlišč v grafu" : "Število povezav v grafu"
+                                )
+                        )
                                 .getErrorStream()));
                         String errLine;
 
@@ -98,7 +105,7 @@ public class Main {
             long start;
             IGraph graph;
             if(problem.doIncreaseVertexNumber){
-                graph = problem.implementation.generateGraph(problemSize, problemSize * 10);
+                graph = problem.implementation.generateGraph(problemSize, (int)(problemSize * problemSize * 0.1));
             } else {
                 graph = problem.implementation.generateGraph(100, problemSize);
             }
