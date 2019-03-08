@@ -13,7 +13,8 @@ import java.util.Scanner;
 
 enum Mode{
     TEST(1, 0),
-    MEASURE(10, 100);
+    MEASURE(1, 1),
+    MEASURE_ALL(10, 100);
 
     public int repetitions;
     public int skippedRepetitions;
@@ -39,63 +40,55 @@ enum Problem {
 }
 
 public class Main {
-    private final static int TEST_SIZE = 100, FROM_SIZE = 100, TO_SIZE = 1000, STEP = 100;
+    private final static int TEST_SIZE = 1000, FROM_SIZE = 1000, TO_SIZE = 8000, STEP = 1000;
     private final static Mode mode = Mode.MEASURE;
-    private final static Problem problem = Problem.VERTEX_COVER;
+    private final static Problem problem = Problem.DOMINATING_SET;
 
     public static void main(String[] args) {
         List<Results> results = new ArrayList<>();
-
-        if(mode == Mode.MEASURE) {
-            try {
-                for (int nVertices = FROM_SIZE; nVertices <= TO_SIZE; nVertices += STEP)
-                    results.add(runAlgorithm(problem, nVertices));
-
-                Scanner reader = new Scanner(System.in);
-                reader.useDelimiter("");
-//                while (true) {
-                System.out.println("Oznaka datoteke:");
-                String label = reader.nextLine();
-                    /*if (saveAns.equals("y")){
-                        break;
-                    } else if(saveAns.equals("n")) {
-                        return;
-                    }*/
-//                }
-                reader.close();
-
-                String fileName = Results.saveResults(results, problem.implementation.toString(), label);
+        switch (mode) {
+            case MEASURE_ALL:
                 try {
-                    if (fileName != null) {
-                        boolean doIncreaseVertexNumber = problem.doIncreaseVertexNumber;
-                        BufferedReader error = new BufferedReader(new InputStreamReader(Runtime.getRuntime().exec(
-                                String.format(
-                                        "python Charts/charts.py \"%s\" \"%s\" \"%s\"",
-                                        fileName,
-                                        problem.implementation.toString(),
-                                        doIncreaseVertexNumber ? "Število vozlišč v grafu" : "Število povezav v grafu"
-                                )
-                        )
-                                .getErrorStream()));
-                        String errLine;
-
-                        while ((errLine = error.readLine()) != null)
-                            System.out.println(errLine);
+                    for (Problem problem : Problem.values()) {
+                        results = measure(problem);
+                        saveAndGenerateCharts(problem, results, "");
                     }
-                } catch (Exception e) {
-                    System.out.println("Zaganjanje skripte za izris grafa ni uspelo");
+                } catch (AlgorithmException e) {
+                    e.printStackTrace();
                 }
-            } catch (AlgorithmException e) {
-                e.printStackTrace();
-            }
-        } else {
-            try {
-                results.add(runAlgorithm(problem, TEST_SIZE));
-                System.out.println(results.get(0));
-            } catch (AlgorithmException e) {
-                e.printStackTrace();
-            }
+                break;
+            case MEASURE:
+                try {
+                    results = measure(problem);
+
+                    Scanner reader = new Scanner(System.in);
+                    reader.useDelimiter("");
+
+                    System.out.println("Oznaka datoteke:");
+                    String label = reader.nextLine();
+                    reader.close();
+
+                    saveAndGenerateCharts(problem, results, label);
+                } catch (AlgorithmException e) {
+                    e.printStackTrace();
+                }
+                break;
+            case TEST:
+                try {
+                    results.add(runAlgorithm(problem, TEST_SIZE));
+                    System.out.println(results.get(0));
+                } catch (AlgorithmException e) {
+                    e.printStackTrace();
+                }
+                break;
         }
+    }
+
+    private static List<Results> measure(Problem problem) throws AlgorithmException {
+        List<Results> results = new ArrayList<>();
+        for (int nVertices = FROM_SIZE; nVertices <= TO_SIZE; nVertices += STEP)
+            results.add(runAlgorithm(problem, nVertices));
+        return results;
     }
 
     private static Results runAlgorithm(Problem problem, int problemSize) throws AlgorithmException {
@@ -105,7 +98,7 @@ public class Main {
             long start;
             IGraph graph;
             if(problem.doIncreaseVertexNumber){
-                graph = problem.implementation.generateGraph(problemSize, (int)(problemSize * problemSize * 0.1));
+                graph = problem.implementation.generateGraph(problemSize, (int)(problemSize * problemSize * 0.05));
             } else {
                 graph = problem.implementation.generateGraph(100, problemSize);
             }
@@ -129,6 +122,30 @@ public class Main {
             }
         }
         return new Results(problemSize, resultsForOneProblemSize);
+    }
+
+    private static void saveAndGenerateCharts(Problem problem, List<Results> results, String label){
+        String fileName = Results.saveResults(results, problem.implementation.toString(), label);
+        try {
+            if (fileName != null) {
+                boolean doIncreaseVertexNumber = problem.doIncreaseVertexNumber;
+                BufferedReader error = new BufferedReader(new InputStreamReader(Runtime.getRuntime().exec(
+                        String.format(
+                                "python Charts/charts.py \"%s\" \"%s\" \"%s\"",
+                                fileName,
+                                problem.implementation.toString(),
+                                doIncreaseVertexNumber ? "Število vozlišč v grafu" : "Število povezav v grafu"
+                        )
+                )
+                        .getErrorStream()));
+                String errLine;
+
+                while ((errLine = error.readLine()) != null)
+                    System.out.println(errLine);
+            }
+        } catch (Exception e) {
+            System.out.println("Zaganjanje skripte za izris grafa ni uspelo");
+        }
     }
 
     static class Results {
