@@ -15,7 +15,7 @@ X_AXIS_LABEL = "Število povezav v grafu"
 FINAL = False
 
 
-def get_scatters(results, avgs, name, column_name, color):
+def get_scatters(results, avgs, name, column_name, color, use_median):
     measurements = go.Scatter(
         x=results['n_problem'],
         y=results[column_name],
@@ -28,7 +28,7 @@ def get_scatters(results, avgs, name, column_name, color):
         x=avgs.keys(),
         y=avgs,
         mode='lines',
-        name=name + ' - povprečje',
+        name=name + ' - mediana' if use_median else ' - povprečje',
         line=color
     )
     return [measurements, avg]
