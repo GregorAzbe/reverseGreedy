@@ -34,12 +34,14 @@ def get_scatters(results, avgs, name, column_name, color):
     return [measurements, avg]
 
 
-def make_chart(name, results, x_axis_label, y_axis_label, greedy_column_index, reverse_gredy_column_index, use_median, unit=""):
+def make_chart(name, results, x_axis_label, y_axis_label, greedy_column_index, reverse_gredy_column_index, use_median,
+               unit=""):
     results_df = ps.DataFrame(results[:, (0, greedy_column_index, reverse_gredy_column_index)],
                               columns=['n_problem', 'greedy', 'reverse_greedy'])
 
     avgs_or_medians = results_df.groupby(['n_problem']).apply(
-        lambda x: (np.median(x['greedy']) if use_median else np.average(x['greedy']), np.median(x['reverse_greedy']) if use_median else np.average(x['reverse_greedy']))
+        lambda x: (np.median(x['greedy']) if use_median else np.average(x['greedy']),
+                   np.median(x['reverse_greedy']) if use_median else np.average(x['reverse_greedy']))
     ).apply(ps.Series)
 
     greedy_scatters = get_scatters(
@@ -58,7 +60,10 @@ def make_chart(name, results, x_axis_label, y_axis_label, greedy_column_index, r
         REVERSE_GREEDY_COLOR
     )
     data = greedy_scatters + reverse_greedy_scatters
+    make_chart_image(name, x_axis_label, y_axis_label, unit, data)
 
+
+def make_chart_image(name, x_axis_label, y_axis_label, unit, data):
     layout = go.Layout(
         title=name,
         xaxis=dict(
@@ -88,8 +93,11 @@ def make_charts(file_name, problem_name, x_axis_label):
     results[:, 4] = results[:, 4] / 1000000
 
     plotly.tools.set_credentials_file(username='gregor.azbe', api_key='ynSyJDs4GCTyGD4oBkAO')
-    make_chart(problem_name + " - primerjava uspešnosti algoritmov", results, x_axis_label, "Velikost rešitve", 1, 3, False)
-    make_chart(problem_name + "  - primerjava učinkovitosti algoritmov", results, x_axis_label, "Čas računanja", 2, 4, True, "ms")
+    make_chart(problem_name + " - primerjava uspešnosti algoritmov", results, x_axis_label, "Velikost rešitve", 1, 3,
+               False)
+    make_chart(problem_name + "  - primerjava učinkovitosti algoritmov", results, x_axis_label, "Čas računanja", 2, 4,
+               True, "ms")
+
 
 if len(sys.argv) > 1:
     try:
